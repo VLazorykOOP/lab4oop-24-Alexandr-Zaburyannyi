@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <unordered_map>
 using namespace std;
 
 class Vector3F {
@@ -164,7 +166,44 @@ istream& operator>>(istream& is, Vector3F& vec) {
     return is;
 }
 
-int main() {
+class AssociatedEntities {
+private:
+    unordered_map<string, string> phonebook;
+
+public:
+    void addEntry(const string& phoneNumber, const string& fullName) {
+        phonebook[phoneNumber] = fullName;
+    }
+
+    string operator[](const string& phoneNumber) {
+        if (phonebook.find(phoneNumber) != phonebook.end()) {
+            return phonebook[phoneNumber];
+        } else {
+
+            return "Error: Entry not found";
+        }
+    }
+
+    friend istream& operator>>(istream& input, AssociatedEntities& ae) {
+        string phoneNumber, fullName;
+        cout << "Enter phone number: ";
+        input >> phoneNumber;
+        cout << "Enter full name: ";
+        input.ignore();
+        getline(input, fullName);
+        ae.addEntry(phoneNumber, fullName);
+        return input;
+    }
+
+    friend ostream& operator<<(ostream& output, const AssociatedEntities& ae) {
+        for (const auto& entry : ae.phonebook) {
+            output << "Phone Number: " << entry.first << ", Full Name: " << entry.second << endl;
+        }
+        return output;
+    }
+};
+
+void firstTask() {
     Vector3F vec1;
     Vector3F vec2(2.0f);
     float arr[3] = {1.0f, 2.0f, 3.0f};
@@ -237,7 +276,23 @@ int main() {
     cout << "Enter three float values for a new vector (x, y, z): ";
     cin >> vec1;
     cout << "New vector after input: " << vec1 << endl;
+}
 
+void secondTask() {
+    AssociatedEntities phonebook;
+
+    phonebook.addEntry("123456789", "John Doe");
+    phonebook.addEntry("987654321", "Jane Smith");
+
+    cout << "Phonebook Entries:" << endl;
+    cout << phonebook << endl;
+
+    cout << "Search result for phone number 123456789: " << phonebook["123456789"] << endl;
+    cout << "Search result for phone number 999999999: " << phonebook["999999999"] << endl;
+}
+int main() {
+   firstTask();
+   secondTask();
     return 0;
 }
 
